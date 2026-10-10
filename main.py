@@ -1,4 +1,4 @@
-from pydantic_core.core_schema import plain_serializer_function_ser_schema
+
 from uuid import uuid4
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -21,13 +21,11 @@ class TaskSchema(BaseModel):
 class TaskCreate(BaseModel):
     title: str
 
-
 class TaskUpdate(BaseModel):#---------------------------
     title: str | None = None
     completed: bool | None = None
 
 tasks: list[TaskSchema] = []
-
 
 @app.get('/tasks')
 def read_tasks() -> list[TaskSchema]:
@@ -60,3 +58,46 @@ def delete_task(task_id):
     for task in tasks:
         if task.id == task_id:
             tasks.remove(task)
+
+
+#----------------------------------------------------------------------------------------------------------------------------------
+class CategorySchema(BaseModel):
+    id: str
+    name: str
+    
+class CategoryCreate(BaseModel):
+    name: str
+
+class CategoryUpdate(BaseModel):
+    name: str | None = None
+
+categories: list[CategorySchema] = []
+
+
+
+@app.get('/categories')
+def read_categories() -> list[CategorySchema]:
+    return categories
+
+
+@app.post('/categories', status_code=status.HTTP_201_CREATED)
+def create_category(payload: CategoryCreate) -> CategorySchema:
+    new_category = CategorySchema(id=str(uuid4()), name=payload.name)
+
+    categories.append(new_category)
+    return new_category
+
+
+@app.patch('/categories/{category_id}')
+def update_category(category_id : str, payload: CategoryUpdate):
+    for category in categories:
+        if category.id == category_id:
+            if payload.name:
+                category.name = payload.name
+            return category
+
+@app.delete('/categories/{category_id}', status_code=status.HTTP_204_NO_CONTENT)
+def delete_category(category_id):
+    for category in categories:
+        if category.id == category_id:
+            categories.remove(category)
