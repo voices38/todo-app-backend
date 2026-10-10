@@ -26,10 +26,6 @@ class TaskUpdate(BaseModel):#---------------------------
     title: str | None = None
     completed: bool | None = None
 
-class TaskDelete(BaseModel):
-    pass
-
-
 tasks: list[TaskSchema] = []
 
 
