@@ -46,7 +46,7 @@ def create_task(payload: TaskCreate) -> TaskSchema:
 def update_task(task_id : str, payload: TaskUpdate):
    for task in tasks:
     if task.id == task_id:
-        if payload.title:
+        if payload.title is not None:
             task.title = payload.title
         if payload.completed is not None:
             task.completed = payload.completed
